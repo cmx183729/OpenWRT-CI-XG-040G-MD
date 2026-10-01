@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2026 VIKINGYFY
 
-name: Auto-Clean
+name: Cleanup Releases and Workflow Runs
 
 on:
   #自动清理：每天早上5点

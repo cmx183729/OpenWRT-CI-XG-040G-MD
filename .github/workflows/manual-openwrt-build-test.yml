@@ -2,7 +2,7 @@
 # Copyright (C) 2026 VIKINGYFY
 
 #CI项目
-name: WRT-TEST
+name: Manual OpenWrt Build Test
 
 #CI计划
 on:
@@ -55,8 +55,8 @@ permissions: write-all
 jobs:
   config:
     name: ${{inputs.CONFIG}}
-    #调用公用编译核心WRT-CORE.yml
-    uses: ./.github/workflows/WRT-CORE.yml
+    #调用公用编译核心 reusable-openwrt-build.yml
+    uses: ./.github/workflows/reusable-openwrt-build.yml
     with:
       #编译配置
       WRT_CONFIG: ${{inputs.CONFIG}}

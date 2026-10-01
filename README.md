@@ -9,10 +9,12 @@ https://www.right.com.cn/forum/thread-8453612-1-1.html
 支持设备： 四个固件通用，设备名称只是区分不同功能 
 
 带USB设备:
-  XG-040G-MD  XG-140G-MD(pon0 wan)
+  XG-040G-MD  XG-140G-MD(LAN4 PPPoE WAN)
 
 不带USB设备: 
-  XG-040G-TF  XG-140G-TF(pon0 wan)
+  XG-040G-TF  XG-140G-TF(LAN4 PPPoE WAN)
+
+默认网络：LAN1-LAN3 为 LAN 桥接，LAN4 为 PPPoE WAN。首次启动后请在 LuCI 的“网络 → 接口 → WAN”填写宽带账号和密码。
 
 
 

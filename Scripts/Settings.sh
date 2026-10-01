@@ -75,7 +75,34 @@ if [[ "${WRT_TARGET^^}" == *"QUALCOMMAX"* ]]; then
 	fi
 fi
 
-#调整网口顺序
-sed -i 's/ucidef_set_interface_lan "lan1 lan2 lan3 lan4"/ucidef_set_interfaces_lan_wan "lan1 lan2 lan3" "lan4"/g' target/linux/airoha/an7581/base-files/etc/board.d/02_network
-sed -i 's/interrupts.*//g' target/linux/airoha/dts/an7581-nokia_xg-040g-md-common.dtsi
+# Nokia XG-040G/XG-140G: retain the normal copper layout (LAN1-3 + LAN4 WAN)
+# and prevent a PON-enabled source tree from pulling its PON runtime stack into
+# these images.  The installed uci-defaults script performs the matching
+# first-boot UCI setup, including an empty-credential PPPoE WAN on LAN4.
+if [[ "${WRT_TARGET,,}" == "airoha" ]]; then
+	AIROHA_IMAGE_MK="./target/linux/airoha/image/an7581.mk"
+	AIROHA_DEFAULTS_DIR="./target/linux/airoha/an7581/base-files/etc/uci-defaults"
 
+	if [ -f "$AIROHA_IMAGE_MK" ]; then
+		awk '
+			/^define Device\/nokia_xg-(040g|140g)-(md|tf)(-[^[:space:]]+)?/ {
+				in_nokia_xg = 1
+			}
+			in_nokia_xg && /^[[:space:]]*endef[[:space:]]*$/ {
+				in_nokia_xg = 0
+			}
+			{
+				if (in_nokia_xg) {
+					gsub(/-?(kmod-airoha-en7572|kmod-airoha-paged-bosa|kmod-airoha-pon-frontend|kmod-airoha-xpon|airoha-pon-debug|airoha-ponctl|airoha-pond|luci-app-pon)/, "")
+					gsub(/[[:space:]]+/, " ")
+					sub(/^ /, "  ")
+				}
+				print
+			}
+		' "$AIROHA_IMAGE_MK" > "$AIROHA_IMAGE_MK.tmp" && mv "$AIROHA_IMAGE_MK.tmp" "$AIROHA_IMAGE_MK"
+	fi
+
+	install -Dm755 "$GITHUB_WORKSPACE/Scripts/files/99-nokia-xg-network" "$AIROHA_DEFAULTS_DIR/99-nokia-xg-network"
+
+	echo "Nokia XG network defaults set to LAN1-3 + LAN4 PPPoE WAN; PON packages excluded."
+fi

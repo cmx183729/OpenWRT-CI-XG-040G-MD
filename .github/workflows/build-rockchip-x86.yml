@@ -2,13 +2,13 @@
 # Copyright (C) 2026 VIKINGYFY
 
 #CI项目
-name: MTK-ALL
+name: Build Rockchip and x86
 
 #CI计划
 on:
-  #自动编译：当Auto-Clean运行完成后
+  #自动编译：当清理工作流运行完成后
   workflow_run:
-    workflows: ["Auto-Clean"]
+    workflows: ["Cleanup Releases and Workflow Runs"]
     types:
       - completed
   #手动编译
@@ -35,12 +35,12 @@ jobs:
       fail-fast: false
       #max-parallel: 3
       matrix:
-        CONFIG: [MEDIATEK-WIFI-YES, MEDIATEK-WIFI-NO]
+        CONFIG: [ROCKCHIP, X86]
         SOURCE: [VIKINGYFY/immortalwrt]
         BRANCH: [owrt]
 
-    #调用公用编译核心WRT-CORE.yml
-    uses: ./.github/workflows/WRT-CORE.yml
+    #调用公用编译核心 reusable-openwrt-build.yml
+    uses: ./.github/workflows/reusable-openwrt-build.yml
     with:
       #编译配置
       WRT_CONFIG: ${{matrix.CONFIG}}
