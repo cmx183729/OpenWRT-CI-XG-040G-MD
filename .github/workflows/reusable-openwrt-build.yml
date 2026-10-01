@@ -152,6 +152,8 @@ jobs:
         run: |
           cd ./wrt/
 
+          grep -q '^src-git istore ' feeds.conf.default || \
+            echo 'src-git istore https://github.com/linkease/istore.git;main' >> feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
